@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>المظاهر</title>
+    <link rel="icon" type="image/png" href="iconD.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .item {
+            background: white;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            display: inline-block;
+            width: 200px;
+        }
+        .item button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            padding: 15px 30px;
+            font-size: 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+            transform: scale(1.1);
+        }
+        .reset-button {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            padding: 15px 30px;
+            font-size: 24px;
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .reset-button:hover {
+            background-color: #cc0000;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='doda.html'">← العودة للعبة</button>
+    <button class="reset-button" onclick="resetAllData()">مسح البيانات</button>
+    <div class="container">
+        <h1>مظاهر اللعبة 🎨</h1>
+        <div id="coinsDisplay">
+            <h2>العملات الذهبية: <span id="coins">0</span></h2>
+            <img src="coin.png" class="coinIcon" alt="عملة" style="width: 50px;">
+        </div>
+
+        <div class="item">
+            <h3>الجلد العادي 🐍</h3>
+            <p>مجاني</p>
+            <button onclick="selectSkin('green')">اختيار</button>
+        </div>
+
+        <div class="item" id="blueSkinOwned" style="display: none;">
+            <h3>جلد أزرق 🐉</h3>
+            <p>تم الشراء</p>
+            <button onclick="selectSkin('blue')">اختيار</button>
+        </div>
+
+        <div class="item" id="orangeSkin" style="display: none;">
+            <h3>جلد برتقالي 🐍</h3>
+            <p>تم الحصول عليه</p>
+            <button onclick="selectSkin('orange')">اختيار</button>
+        </div>
+
+        <div class="item" id="goldenSkin" style="display: none;">
+            <h3>الجلد الذهبي 👑</h3>
+            <p>تم الحصول عليه</p>
+            <p>ميزة: نقاط مضاعفة x2</p>
+            <button onclick="selectSkin('golden')">اختيار</button>
+        </div>
+
+        <div class="item" id="speedSkin" style="display: none;">
+            <h3>جلد السرعة ⚡</h3>
+            <p>تم الحصول عليه</p>
+            <p>ميزة: سرعة مضاعفة x2</p>
+            <button onclick="selectSkin('speed')">اختيار</button>
+        </div>
+
+        <div class="item" id="experienceSkin" style="display: none;">
+            <h3>جلد الخبرة 🎯</h3>
+            <p>تم الحصول عليه</p>
+            <p>ميزة: المرور من خلال الجدران</p>
+            <button onclick="selectSkin('experience')">اختيار</button>
+        </div>
+
+        <div class="item" id="cursedSkin" style="display: none;">
+            <h3>الجلد الملعون 👻</h3>
+            <p>تم الحصول عليه</p>
+            <p>ميزة: الدودة لا تكبر أبداً</p>
+            <button onclick="selectSkin('cursed')">اختيار</button>
+        </div>
+
+        <div class="item" id="slowSkin" style="display: none;">
+            <h3>جلد البطيء 🐌</h3>
+            <p>تم الحصول عليه</p>
+            <p>ميزة: سرعة بطيئة (200 مللي)</p>
+            <button onclick="selectSkin('slow')">اختيار</button>
+        </div>
+    </div>
+
+    <script>
+        // تحميل عدد العملات من الذاكرة المحلية
+        let coins = parseInt(localStorage.getItem('snakeGameCoins')) || 0;
+        document.getElementById('coins').textContent = coins;
+
+        // التحقق من شراء الجلد الأزرق
+        const blueSkinPurchased = localStorage.getItem('blueSkinPurchased') === 'true';
+        if (blueSkinPurchased) {
+            document.getElementById('blueSkinOwned').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء الجلد البرتقالي
+        const usedCodes = JSON.parse(localStorage.getItem('usedCodes') || '[]');
+        if (usedCodes.includes('UPDATE1')) {
+            document.getElementById('orangeSkin').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء الجلد الذهبي
+        const goldenSkinPurchased = localStorage.getItem('goldenSkinPurchased') === 'true';
+        if (goldenSkinPurchased) {
+            document.getElementById('goldenSkin').style.display = 'inline-block';
+        }
+
+        // التحقق من وجود جلد السرعة
+        if (usedCodes.includes('speed doda')) {
+            document.getElementById('speedSkin').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء جلد الخبرة
+        const experienceSkinPurchased = localStorage.getItem('experienceSkinPurchased') === 'true';
+        if (experienceSkinPurchased) {
+            document.getElementById('experienceSkin').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء الجلد الملعون
+        if(localStorage.getItem('cursedSkinPurchased') === 'true') {
+            document.getElementById('cursedSkin').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء جلد البطيء
+        if(localStorage.getItem('slowSkinPurchased') === 'true') {
+            document.getElementById('slowSkin').style.display = 'inline-block';
+        }
+
+        function resetAllData() {
+            if (confirm('هل أنت متأكد من مسح جميع البيانات؟ سيتم إعادة تعيين اللعبة كأنك لاعب جديد.')) {
+                localStorage.clear();
+                alert('تم مسح جميع البيانات بنجاح!');
+                window.location.reload();
+            }
+        }
+
+        function selectSkin(color) {
+            localStorage.setItem('snakeColor', color);
+            alert('تم اختيار الجلد بنجاح!');
+        }
+
+        function buySkin(price, color) {
+            if (coins >= price) {
+                coins -= price;
+                localStorage.setItem('snakeGameCoins', coins);
+                document.getElementById('coins').textContent = coins;
+                localStorage.setItem('snakeColor', color);
+                localStorage.setItem('blueSkinPurchased', 'true');
+                document.getElementById('blueSkinOwned').style.display = 'inline-block';
+                alert('تم شراء المظهر بنجاح!');
+            } else {
+                alert('عذراً! ليس لديك عملات كافية!');
+            }
+        }
+    </script>
+</body>
+</html>

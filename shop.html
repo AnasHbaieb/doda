@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>المتجر</title>
+    <link rel="icon" type="image/png" href="iconD.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .item {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .item h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .item p {
+            margin: 5px 0;
+            color: #666;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #coins {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        #resetButton {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ff4444;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            border: none;
+        }
+        #resetButton:hover {
+            background-color: #cc0000;
+        }
+        #backButton {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #4CAF50;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            border: none;
+        }
+        #backButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <button id="backButton" onclick="window.location.href='doda.html'">العودة للعبة</button>
+    <button id="resetButton" onclick="resetAllData()">مسح البيانات</button>
+    <div class="container">
+        <h1>متجر اللعبة 🎮</h1>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <span>العملات: </span>
+            <span id="coins">0</span>
+        </div>
+
+        <div class="shop-grid">
+            <div class="item" id="blueSkin">
+                <h3>جلد أزرق 🐉</h3>
+                <p>السعر: 3 عملات</p>
+                <button onclick="buyItem(3, 'blueSkin')">شراء</button>
+            </div>
+
+            <div class="item" id="blueSkinOwned" style="display: none;">
+                <h3>جلد أزرق 🐉</h3>
+                <p>تم الشراء</p>
+            </div>
+
+            <div class="item" id="bigBall">
+                <h3>الكرة الكبيرة 🟣</h3>
+                <p>السعر: 15 عملة</p>
+                <p>فرصة 10% لظهور كرة كبيرة تعطي 5 نقاط</p>
+                <button onclick="buyItem(15, 'bigBall')">شراء</button>
+            </div>
+
+            <div class="item" id="bigBallOwned" style="display: none;">
+                <h3>الكرة الكبيرة 🟣</h3>
+                <p>تم الشراء</p>
+            </div>
+
+            <div class="item" id="goldenSkin">
+                <h3>الجلد الذهبي 👑</h3>
+                <p>السعر: 20 عملة</p>
+                <p>ميزة: نقاط مضاعفة x2</p>
+                <button onclick="buyItem(20, 'goldenSkin')">شراء</button>
+            </div>
+
+            <div class="item" id="goldenSkinOwned" style="display: none;">
+                <h3>الجلد الذهبي 👑</h3>
+                <p>تم الشراء</p>
+            </div>
+
+            <div class="item" id="experienceSkin">
+                <h3>جلد الخبرة 🎯</h3>
+                <p>السعر: 14 عملة</p>
+                <p>ميزة: المرور من خلال الجدران</p>
+                <button onclick="buyItem(14, 'experienceSkin')">شراء</button>
+            </div>
+
+            <div class="item" id="experienceSkinOwned" style="display: none;">
+                <h3>جلد الخبرة 🎯</h3>
+                <p>تم الشراء</p>
+            </div>
+
+            <div class="item" id="miracleBall">
+                <h3>كرة المعجزة 💣</h3>
+                <p>السعر: 10 عملات</p>
+                <p>فرصة 0.5% لظهور كرة سوداء تعطي 25 نقطة</p>
+                <button onclick="buyItem(10, 'miracleBall')">شراء</button>
+            </div>
+
+            <div class="item" id="miracleBallOwned" style="display: none;">
+                <h3>كرة المعجزة 💣</h3>
+                <p>تم الشراء</p>
+            </div>
+
+            <div class="item" id="royalLuck">
+                <h3>الحظ الملكي 🍀</h3>
+                <p>السعر: 21 عملة</p>
+                <p>ميزة: زيادة نسبة حظ الميزات x10</p>
+                <button onclick="buyItem(21, 'royalLuck')">شراء</button>
+            </div>
+
+            <div class="item" id="royalLuckOwned" style="display: none;">
+                <h3>الحظ الملكي 🍀</h3>
+                <p>تم الشراء</p>
+            </div>
+
+            <div class="item" id="wheel">
+                <h3>العجلة الدوارة 🎡</h3>
+                <p>ميزة: تمكنك من استخدام العجلة الدوارة</p>
+                <p>السعر: 11 عملة</p>
+                <button onclick="buyItem(11, 'wheel')">شراء</button>
+            </div>
+
+            <div class="item" id="wheelOwned" style="display: none;">
+                <h3>العجلة الدوارة 🎡</h3>
+                <p>تم الشراء</p>
+            </div>
+
+            <div class="item" id="slowSkin">
+                <h3>جلد البطيء 🐌</h3>
+                <p>السعر: 1 عملة</p>
+                <p>ميزة: سرعة بطيئة (200 مللي)</p>
+                <button onclick="buyItem(1, 'slowSkin')">شراء</button>
+            </div>
+
+            <div class="item" id="slowSkinOwned" style="display: none;">
+                <h3>جلد البطيء 🐌</h3>
+                <p>تم الشراء</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تحميل عدد العملات من الذاكرة المحلية
+        let coins = parseInt(localStorage.getItem('snakeGameCoins')) || 0;
+        document.getElementById('coins').textContent = coins;
+
+        // التحقق من شراء الجلد الأزرق
+        const blueSkinPurchased = localStorage.getItem('blueSkinPurchased') === 'true';
+        if (blueSkinPurchased) {
+            document.getElementById('blueSkin').style.display = 'none';
+            document.getElementById('blueSkinOwned').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء الكرة الكبيرة
+        const bigBallPurchased = localStorage.getItem('bigBallPurchased') === 'true';
+        if (bigBallPurchased) {
+            document.getElementById('bigBall').style.display = 'none';
+            document.getElementById('bigBallOwned').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء الجلد الذهبي
+        const goldenSkinPurchased = localStorage.getItem('goldenSkinPurchased') === 'true';
+        if (goldenSkinPurchased) {
+            document.getElementById('goldenSkin').style.display = 'none';
+            document.getElementById('goldenSkinOwned').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء جلد الخبرة
+        const experienceSkinPurchased = localStorage.getItem('experienceSkinPurchased') === 'true';
+        if (experienceSkinPurchased) {
+            document.getElementById('experienceSkin').style.display = 'none';
+            document.getElementById('experienceSkinOwned').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء كرة المعجزة
+        const miracleBallPurchased = localStorage.getItem('miracleBallPurchased') === 'true';
+        if (miracleBallPurchased) {
+            document.getElementById('miracleBall').style.display = 'none';
+            document.getElementById('miracleBallOwned').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء الحظ الملكي
+        const royalLuckPurchased = localStorage.getItem('royalLuckPurchased') === 'true';
+        if (royalLuckPurchased) {
+            document.getElementById('royalLuck').style.display = 'none';
+            document.getElementById('royalLuckOwned').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء العجلة الدوارة
+        const wheelPurchased = localStorage.getItem('wheelPurchased') === 'true';
+        if (wheelPurchased) {
+            document.getElementById('wheel').style.display = 'none';
+            document.getElementById('wheelOwned').style.display = 'inline-block';
+        }
+
+        // التحقق من شراء جلد البطيء
+        const slowSkinPurchased = localStorage.getItem('slowSkinPurchased') === 'true';
+        if (slowSkinPurchased) {
+            document.getElementById('slowSkin').style.display = 'none';
+            document.getElementById('slowSkinOwned').style.display = 'inline-block';
+        }
+
+        // في بداية الملف، بعد تحميل عدد العملات
+        const usedCodes = JSON.parse(localStorage.getItem('usedCodes') || '[]');
+        if (usedCodes.includes('ossama')) {
+            // إظهار جلد البطيء في المتجر
+            document.getElementById('slowSkin').style.display = 'inline-block';
+        } else {
+            // إخفاء جلد البطيء في المتجر
+            document.getElementById('slowSkin').style.display = 'none';
+        }
+
+        function buyItem(price, itemId) {
+            if (coins >= price) {
+                coins -= price;
+                localStorage.setItem('snakeGameCoins', coins);
+                document.getElementById('coins').textContent = coins;
+                
+                if (itemId === 'blueSkin') {
+                    localStorage.setItem('blueSkinPurchased', 'true');
+                    document.getElementById('blueSkin').style.display = 'none';
+                    document.getElementById('blueSkinOwned').style.display = 'inline-block';
+                } else if (itemId === 'bigBall') {
+                    localStorage.setItem('bigBallPurchased', 'true');
+                    document.getElementById('bigBall').style.display = 'none';
+                    document.getElementById('bigBallOwned').style.display = 'inline-block';
+                } else if (itemId === 'goldenSkin') {
+                    localStorage.setItem('goldenSkinPurchased', 'true');
+                    localStorage.setItem('snakeColor', 'golden');
+                    document.getElementById('goldenSkin').style.display = 'none';
+                    document.getElementById('goldenSkinOwned').style.display = 'inline-block';
+                } else if (itemId === 'experienceSkin') {
+                    localStorage.setItem('experienceSkinPurchased', 'true');
+                    document.getElementById('experienceSkin').style.display = 'none';
+                    document.getElementById('experienceSkinOwned').style.display = 'inline-block';
+                } else if (itemId === 'miracleBall') {
+                    localStorage.setItem('miracleBallPurchased', 'true');
+                    document.getElementById('miracleBall').style.display = 'none';
+                    document.getElementById('miracleBallOwned').style.display = 'inline-block';
+                } else if (itemId === 'royalLuck') {
+                    localStorage.setItem('royalLuckPurchased', 'true');
+                    document.getElementById('royalLuck').style.display = 'none';
+                    document.getElementById('royalLuckOwned').style.display = 'inline-block';
+                } else if (itemId === 'wheel') {
+                    localStorage.setItem('wheelPurchased', 'true');
+                    document.getElementById('wheel').style.display = 'none';
+                    document.getElementById('wheelOwned').style.display = 'inline-block';
+                } else if (itemId === 'slowSkin') {
+                    localStorage.setItem('slowSkinPurchased', 'true');
+                    document.getElementById('slowSkin').style.display = 'none';
+                    document.getElementById('slowSkinOwned').style.display = 'inline-block';
+                }
+                
+                alert('تم الشراء بنجاح!');
+            } else {
+                alert('عذراً! ليس لديك عملات كافية!');
+            }
+        }
+
+        function resetAllData() {
+            if (confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
+                localStorage.clear();
+                alert('تم مسح جميع البيانات بنجاح!');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

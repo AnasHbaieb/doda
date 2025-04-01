@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>لعبة الدودة</title>
+    <link rel="icon" type="image/png" href="iconD.png">
+    <style>
+        canvas {
+            border: 2px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+        #restartButton {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 30px;
+            font-size: 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #restartButton:hover {
+            background-color: #45a049;
+            transform: scale(1.1);
+        }
+        #scoreBoard {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            direction: rtl;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #heartsDisplay {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .heart {
+            color: red;
+            font-size: 24px;
+        }
+        #shopButton, #skinsButton {
+            margin-top: 20px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #shopButton:hover, #skinsButton:hover {
+            background-color: #45a049;
+        }
+        #helpButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            width: 60px;
+            height: 60px;
+        }
+        #helpButton:hover {
+            background-color: #1976D2;
+            transform: scale(1.1);
+        }
+        .helpIcon {
+            width: 40px;
+            height: 40px;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+        #coinsBoard {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            direction: rtl;
+            display: flex;
+            align-items: center;
+        }
+        .coinIcon {
+            width: 50px;
+            height: 50px;
+            margin-left: 10px;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+        .shopIcon {
+            width: 80px;
+            height: 80px;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+        #codeSection {
+            text-align: center;
+            margin-top: 20px;
+            direction: rtl;
+        }
+        #codeInput {
+            padding: 10px;
+            font-size: 18px;
+            width: 200px;
+            margin-left: 10px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+        }
+        #submitCode {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #submitCode:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        #spinWheel {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            background-color: #FF9800;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            width: 200px;
+            text-align: center;
+        }
+        
+        #spinWheel:hover {
+            background-color: #F57C00;
+            transform: scale(1.05);
+        }
+        
+        .wheel-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .wheel-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            direction: rtl;
+        }
+        
+        #wheelResult {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f5f5f5;
+        }
+        
+        #wheelStats {
+            position: absolute;
+            top: 160px;
+            left: 20px;
+            color: black;
+            font-size: 14px;
+            direction: rtl;
+            text-align: right;
+            width: 200px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div id="coinsBoard">
+        <span id="coins">0</span>
+        <img src="coin.png" class="coinIcon" alt="عملة">
+        <button id="spinWheel">🎡 العجلة الدوارة (3 عملات)</button>
+        <div id="wheelStats">
+            النسب العادية:<br>
+            لا شيء: 30%<br>
+            عملة واحدة: 25%<br>
+            3 عملات: 25%<br>
+            17 عملة: 19%<br>
+            الجلد الملعون: 1%<br>
+            <br>
+            مع الحظ الملكي:<br>
+            لا شيء: 0%<br>
+            عملة واحدة: 30%<br>
+            3 عملات: 30%<br>
+            17 عملة: 30%<br>
+            الجلد الملعون: 10%
+        </div>
+    </div>
+    <div id="scoreBoard">
+        النقاط: <span id="score">0</span>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+            <button id="shopButton">
+                <img src="shop.png" class="shopIcon" alt="المتجر">
+                المتجر
+            </button>
+            <button id="skinsButton">
+                <img src="store skin.png" class="shopIcon" alt="المظاهر">
+                المظاهر
+            </button>
+            <button id="randomCodeButton" style="background-color: #ff9800; padding: 15px 30px; font-size: 20px;">
+                🎲 كود عشوائي (9 عملات)
+            </button>
+        </div>
+    </div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <button id="restartButton">إعادة اللعب</button>
+    <div id="codeSection">
+        <input type="text" id="codeInput" placeholder="أدخل الكود السري">
+        <button id="submitCode">تحقق</button>
+    </div>
+    <button id="helpButton">
+        <img src="info.png" class="helpIcon" alt="المساعدة">
+    </button>
+    <audio id="popSound" src="pop1.mp3"></audio>
+    <audio id="bigPopSound" src="bigpop.mp3"></audio>
+    <audio id="impossibleSound" src="inpossible.mp3"></audio>
+    <audio id="winSound" src="win.mp3"></audio>
+    <audio id="gameOverSound" src="game over.mp3"></audio>
+    <audio id="sorrySound" src="sorry mate.mp3"></audio>
+    <audio id="coinWinSound" src="coinwin.mp3"></audio>
+    <audio id="spinWinSound" src="spinwin.mp3"></audio>
+    <audio id="uSpinWinSound" src="uspinwin.mp3"></audio>
+    <div class="wheel-overlay" id="wheelOverlay">
+        <div class="wheel-container">
+            <h2>العجلة الدوارة</h2>
+            <div id="wheelResult"></div>
+            <button onclick="closeWheel()">إغلاق</button>
+        </div>
+    </div>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        document.getElementById('shopButton').addEventListener('click', function() {
+            // حفظ حالة اللعبة الحالية قبل الانتقال
+            localStorage.setItem('snakeGameState', JSON.stringify({
+                snake: snake,
+                food: food,
+                direction: d,
+                score: score
+            }));
+            
+            // الانتقال لصفحة المتجر
+            window.location.href = 'shop.html';
+        });
+
+        document.getElementById('skinsButton').addEventListener('click', function() {
+            // حفظ حالة اللعبة الحالية قبل الانتقال
+            localStorage.setItem('snakeGameState', JSON.stringify({
+                snake: snake,
+                food: food,
+                direction: d,
+                score: score
+            }));
+            
+            // الانتقال لصفحة المظاهر
+            window.location.href = 'skin.html';
+        });
+        
+        // حجم المربع الواحد
+        const box = 20;
+        
+        // الدودة
+        let snake = [];
+        snake[0] = {
+            x: 10 * box,
+            y: 10 * box
+        };
+        
+        // الطعام
+        let food = {
+            x: Math.floor(Math.random() * 19 + 1) * box,
+            y: Math.floor(Math.random() * 19 + 1) * box
+        };
+        
+        // الاتجاه
+        let d;
+        let lastDirectionChange = 0;
+        const DIRECTION_CHANGE_DELAY = 30; // تأخير 50 مللي ثانية بين تغييرات الاتجاه
+        
+        document.addEventListener("keydown", direction);
+        
+        function direction(event) {
+            const currentTime = Date.now();
+            if (currentTime - lastDirectionChange < DIRECTION_CHANGE_DELAY) return;
+            
+            if(event.keyCode == 37 && d != "RIGHT") {
+                d = "LEFT";
+                lastDirectionChange = currentTime;
+            }
+            else if(event.keyCode == 38 && d != "DOWN") {
+                d = "UP";
+                lastDirectionChange = currentTime;
+            }
+            else if(event.keyCode == 39 && d != "LEFT") {
+                d = "RIGHT";
+                lastDirectionChange = currentTime;
+            }
+            else if(event.keyCode == 40 && d != "UP") {
+                d = "DOWN";
+                lastDirectionChange = currentTime;
+            }
+        }
+        
+        function collision(head, array) {
+            for(let i = 0; i < array.length; i++) {
+                if(head.x == array[i].x && head.y == array[i].y) return true;
+            }
+            return false;
+        }
+        
+        // إضافة متغير النقاط
+        let score = 0;
+        
+        // إضافة متغير العملات
+        let coins = localStorage.getItem('snakeGameCoins') || 0;
+        coins = parseInt(coins);
+        document.getElementById('coins').textContent = coins;
+        
+        // إضافة متغير لون الدود
+        let snakeColor = localStorage.getItem('snakeColor') || 'green';
+        
+        // إضافة متغير للكرة الكبيرة
+        let bigBallPurchased = localStorage.getItem('bigBallPurchased') === 'true';
+        let isBigBall = false;
+
+        // إضافة متغير لكرة المعجزة
+        let miracleBallPurchased = localStorage.getItem('miracleBallPurchased') === 'true';
+        let isMiracleBall = false;
+
+        // إضافة متغير للحظ الملكي
+        let royalLuckPurchased = localStorage.getItem('royalLuckPurchased') === 'true';
+
+        // إضافة متغير للجلد الذهبي
+        let goldenSkinPurchased = localStorage.getItem('goldenSkinPurchased') === 'true';
+        
+        // إضافة متغير لجلد الخبرة
+        let experienceSkinPurchased = localStorage.getItem('experienceSkinPurchased') === 'true';
+        
+        // إضافة متغير للجلد الملعون
+        let cursedSkinPurchased = localStorage.getItem('cursedSkinPurchased') === 'true';
+        
+        // إضافة متغيرات الصوت
+        const popSound = document.getElementById('popSound');
+        const bigPopSound = document.getElementById('bigPopSound');
+        const impossibleSound = document.getElementById('impossibleSound');
+        const winSound = document.getElementById('winSound');
+        const gameOverSound = document.getElementById('gameOverSound');
+        const sorrySound = document.getElementById('sorrySound');
+        const coinWinSound = document.getElementById('coinWinSound');
+        const spinWinSound = document.getElementById('spinWinSound');
+        const uSpinWinSound = document.getElementById('uSpinWinSound');
+        
+        function resetGame() {
+            snake = [];
+            snake[0] = {
+                x: 10 * box,
+                y: 10 * box
+            };
+            
+            food = {
+                x: Math.floor(Math.random() * 19 + 1) * box,
+                y: Math.floor(Math.random() * 19 + 1) * box
+            };
+            
+            d = undefined;
+            score = 0;
+            document.getElementById('score').textContent = score;
+            clearInterval(game);
+            game = setInterval(draw, 100);
+        }
+
+        document.getElementById('restartButton').addEventListener('click', resetGame);
+        
+        function draw() {
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            for(let i = 0; i < snake.length; i++) {
+                if (snakeColor === 'cursed') {
+                    if (i === 0) {
+                        ctx.fillStyle = '#BC8F8F';
+                    } else {
+                        continue; // تخطي رسم باقي الجسم للجلد الملعون
+                    }
+                } else if (snakeColor === 'golden') {
+                    if (i === 0) {
+                        ctx.fillStyle = '#FFD700';
+                    } else {
+                        ctx.fillStyle = '#FFA500';
+                    }
+                } else if (snakeColor === 'speed') {
+                    if (i === 0) {
+                        ctx.fillStyle = '#00BFFF';
+                    } else {
+                        ctx.fillStyle = '#b9f2ff';
+                    }
+                } else if (snakeColor === 'experience') {
+                    if (i === 0) {
+                        ctx.fillStyle = '#696969';
+                    } else {
+                        ctx.fillStyle = '#C0C0C0';
+                    }
+                } else if (snakeColor === 'slow') {
+                    // رسم الرأس بلون #8B4513
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(snake[i].x * box, snake[i].y * box, box - 2, box - 2);
+                } else {
+                    ctx.fillStyle = (i == 0) ? 
+                        (snakeColor === 'green' ? 'green' : 
+                         (snakeColor === 'blue' ? 'blue' : 
+                          (snakeColor === 'orange' ? '#FF4500' : '#DAA520'))) : 
+                        (snakeColor === 'green' ? 'lightgreen' : 
+                         (snakeColor === 'blue' ? 'lightblue' : 
+                          (snakeColor === 'orange' ? '#FFA500' : '#FFD700')));
+                }
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                
+                ctx.strokeStyle = "black";
+                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+            }
+            
+            // رسم الطعام
+            if (isBigBall) {
+                ctx.fillStyle = "purple";
+                ctx.beginPath();
+                ctx.arc(food.x + box/2, food.y + box/2, box/2, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (isMiracleBall) {
+                ctx.fillStyle = "black";
+                ctx.beginPath();
+                ctx.arc(food.x + box/2, food.y + box/2, box/2, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+            ctx.fillStyle = "red";
+            ctx.fillRect(food.x, food.y, box, box);
+            }
+            
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+            
+            if(d == "LEFT") snakeX -= box;
+            if(d == "UP") snakeY -= box;
+            if(d == "RIGHT") snakeX += box;
+            if(d == "DOWN") snakeY += box;
+            
+            if(snakeX == food.x && snakeY == food.y) {
+                // تشغيل الصوت المناسب حسب نوع الكرة
+                if (bigBallPurchased && isBigBall) {
+                    bigPopSound.currentTime = 0;
+                    bigPopSound.play();
+                    score += 5;
+                } else if (miracleBallPurchased && isMiracleBall) {
+                    impossibleSound.currentTime = 0;
+                    impossibleSound.play();
+                    score += 25;
+                } else {
+                    popSound.currentTime = 0;
+                    popSound.play();
+                    if (snakeColor === 'golden') {
+                        score += 2;
+                    } else {
+                score++;
+                    }
+                }
+                document.getElementById('score').textContent = score;
+                
+                if(score >= 30) {
+                    clearInterval(game);
+                    // تشغيل صوت الفوز
+                    winSound.currentTime = 0;
+                    winSound.play();
+                    // إضافة عملة عند الفوز
+                    coins++;
+                    localStorage.setItem('snakeGameCoins', coins);
+                    document.getElementById('coins').textContent = coins;
+                    alert("مبروك! لقد فزت وحصلت على عملة ذهبية!");
+                    return;
+                }
+                
+                // إنشاء طعام جديد
+                food = {
+                    x: Math.floor(Math.random() * 19 + 1) * box,
+                    y: Math.floor(Math.random() * 19 + 1) * box
+                };
+
+                // التحقق من احتمالية ظهور الكرة الكبيرة وكرة المعجزة
+                if (bigBallPurchased) {
+                    // إذا كان الحظ الملكي مفعل، زيادة نسبة الحظ x10
+                    isBigBall = Math.random() < (royalLuckPurchased ? 0.99 : 0.1); // 100% أو 10% فرصة
+                } else {
+                    isBigBall = false;
+                }
+
+                if (miracleBallPurchased) {
+                    // إذا كان الحظ الملكي مفعل، زيادة نسبة الحظ x10
+                    isMiracleBall = Math.random() < (royalLuckPurchased ? 0.05 : 0.005); // 5% أو 0.5% فرصة
+                } else {
+                    isMiracleBall = false;
+                }
+            } else {
+                snake.pop();
+            }
+            
+            let newHead = {
+                x: snakeX,
+                y: snakeY
+            };
+            
+            // التحقق من الاصطدام بالجدار
+            if(snakeX < 0 || snakeX > canvas.width - box || snakeY < 0 || snakeY > canvas.height - box) {
+                if(snakeColor === 'experience') {
+                    // إذا كان جلد الخبرة مفعل، اظهر من الجانب الآخر
+                    if(snakeX < 0) snakeX = canvas.width - box;
+                    if(snakeX > canvas.width - box) snakeX = 0;
+                    if(snakeY < 0) snakeY = canvas.height - box;
+                    if(snakeY > canvas.height - box) snakeY = 0;
+                } else {
+                    // إذا لم يكن جلد الخبرة مفعل، انتهاء اللعبة
+                    clearInterval(game);
+                    gameOverSound.currentTime = 0;
+                    gameOverSound.play();
+                    alert("انتهت اللعبة! النقاط: " + score);
+                    return;
+                }
+            }
+            
+            newHead.x = snakeX;
+            newHead.y = snakeY;
+            
+            // التحقق من الاصطدام بالنفس
+            if(collision(newHead, snake)) {
+                clearInterval(game);
+                gameOverSound.currentTime = 0;
+                gameOverSound.play();
+                alert("انتهت اللعبة! النقاط: " + score);
+            }
+            
+            snake.unshift(newHead);
+        }
+        
+        // تعديل سرعة اللعبة بناءً على الجلد المختار
+        if (snakeColor === 'speed') {
+            gameSpeed = 50; // سرعة مضاعفة (أسرع)
+        } else if (snakeColor === 'slow') {
+            gameSpeed = 200; // السرعة البطيئة
+        } else {
+            gameSpeed = 100; // السرعة العادية
+        }
+        
+        let game = setInterval(draw, gameSpeed);
+
+        // إضافة معالجة الأكواد السرية
+        document.getElementById('submitCode').addEventListener('click', function() {
+            const code = document.getElementById('codeInput').value.trim();
+            // جلب قائمة الأكواد المستخدمة
+            let usedCodes = JSON.parse(localStorage.getItem('usedCodes') || '[]');
+            
+            // التحقق من أن الكود لم يتم استخدامه من قبل
+            if (usedCodes.includes(code)) {
+                alert('عذراً! هذا الكود تم استخدامه من قبل!');
+                document.getElementById('codeInput').value = '';
+                return;
+            }
+            
+            if(code === 'doda') {
+                coins += 50;
+                localStorage.setItem('snakeGameCoins', coins);
+                document.getElementById('coins').textContent = coins;
+                // إضافة الكود إلى قائمة الأكواد المستخدمة
+                usedCodes.push(code);
+                localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
+                alert('مبروك! لقد حصلت على 50 قطعة ذهبية!');
+                document.getElementById('codeInput').value = '';
+            } else if(code === 'Fin') {
+                localStorage.setItem('luckyRandomCode', 'true');
+                // إضافة الكود إلى قائمة الأكواد المستخدمة
+                usedCodes.push(code);
+                localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
+                alert('مبروك! لقد حصلت على نسبة حظ أعلى في الأكواد العشوائية!');
+                document.getElementById('codeInput').value = '';
+            } else if(code === 'anas 3amk') {
+                coins += 500;
+                localStorage.setItem('snakeGameCoins', coins);
+                document.getElementById('coins').textContent = coins;
+                // إضافة الكود إلى قائمة الأكواد المستخدمة
+                usedCodes.push(code);
+                localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
+                alert('مبروك! لقد حصلت على 500 قطعة ذهبية!');
+                document.getElementById('codeInput').value = '';
+            } else if(code === 'UPDATE1') {
+                localStorage.setItem('snakeColor', 'orange');
+                // إضافة الكود إلى قائمة الأكواد المستخدمة
+                usedCodes.push(code);
+                localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
+                alert('مبروك! لقد حصلت على الجلد البرتقالي!');
+                document.getElementById('codeInput').value = '';
+            } else if(code === 'speed doda') {
+                localStorage.setItem('snakeColor', 'speed');
+                // إضافة الكود إلى قائمة الأكواد المستخدمة
+                usedCodes.push(code);
+                localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
+                alert('مبروك! لقد حصلت على جلد السرعة!');
+                document.getElementById('codeInput').value = '';
+            } else {
+                alert('الكود غير صحيح!');
+            }
+        });
+
+        // إضافة معالجة زر الكود العشوائي
+        document.getElementById('randomCodeButton').addEventListener('click', function() {
+            if (coins >= 9) {
+                coins -= 9;
+                localStorage.setItem('snakeGameCoins', coins);
+                document.getElementById('coins').textContent = coins;
+
+                // قائمة الأكواد المتاحة للحصول عليها عشوائياً
+                const availableCodes = ['doda', 'UPDATE1', 'speed doda', 'Fin', ];
+                
+                // التحقق من تفعيل كود الحظ
+                const hasLuckyCode = localStorage.getItem('luckyRandomCode') === 'true';
+                
+                // اختيار عشوائي بين "لا شيء" أو كود مع نسب مختلفة حسب تفعيل كود الحظ
+                if (Math.random() < (hasLuckyCode ? 0.3 : 0.5)) {
+                    alert('للأسف لم تحصل على أي شيء!');
+                } else {
+                    const randomCode = availableCodes[Math.floor(Math.random() * availableCodes.length)];
+                    document.getElementById('codeInput').value = randomCode;
+                    alert('تم اختيار الكود العشوائي! اضغط على زر "تحقق" لتفعيله.');
+                }
+            } else {
+                alert('عذراً! ليس لديك عملات كافية!');
+            }
+        });
+
+        // إضافة معالجة زر المساعدة
+        document.getElementById('helpButton').addEventListener('click', function() {
+            window.location.href = 'help.html';
+        });
+
+        document.getElementById('spinWheel').addEventListener('click', function() {
+            // التحقق من شراء ميزة العجلة الدوارة
+            if(localStorage.getItem('wheelPurchased') !== 'true') {
+                alert('يجب شراء ميزة العجلة الدوارة من المتجر أولاً!');
+                return;
+            }
+            
+            if (coins >= 3) {
+                coins -= 3;
+                localStorage.setItem('snakeGameCoins', coins);
+                document.getElementById('coins').textContent = coins;
+                
+                const hasRoyalLuck = localStorage.getItem('royalLuckPurchased') === 'true';
+                const random = Math.random() * 100;
+                let result = '';
+                
+                if (hasRoyalLuck) {
+                    // نسب الحظ الملكي
+                    if (random < 30) {
+                        coinWinSound.currentTime = 0;
+                        coinWinSound.play();
+                        coins += 1;
+                        result = 'مبروك! ربحت عملة واحدة';
+                    } else if (random < 60) {
+                        coinWinSound.currentTime = 0;
+                        coinWinSound.play();
+                        coins += 3;
+                        result = 'مبروك! ربحت 3 عملات';
+                    } else if (random < 90) {
+                        coinWinSound.currentTime = 0;
+                        coinWinSound.play();
+                        coins += 17;
+                        result = 'مبروك! ربحت 17 عملة';
+                    } else {
+                        uSpinWinSound.currentTime = 0;
+                        uSpinWinSound.play();
+                        localStorage.setItem('cursedSkinPurchased', 'true');
+                        result = 'مبروك! ربحت الجلد الملعون! 👻';
+                    }
+                } else {
+                    // النسب العادية
+                    if (random < 30) {
+                        sorrySound.currentTime = 0;
+                        sorrySound.play();
+                        result = 'لا شيء! حظاً أوفر في المرة القادمة';
+                    } else if (random < 55) {
+                        coinWinSound.currentTime = 0;
+                        coinWinSound.play();
+                        coins += 1;
+                        result = 'مبروك! ربحت عملة واحدة';
+                    } else if (random < 80) {
+                        coinWinSound.currentTime = 0;
+                        coinWinSound.play();
+                        coins += 3;
+                        result = 'مبروك! ربحت 3 عملات';
+                    } else if (random < 99) {
+                        coinWinSound.currentTime = 0;
+                        coinWinSound.play();
+                        coins += 17;
+                        result = 'مبروك! ربحت 17 عملة';
+                    } else {
+                        uSpinWinSound.currentTime = 0;
+                        uSpinWinSound.play();
+                        localStorage.setItem('cursedSkinPurchased', 'true');
+                        result = 'مبروك! ربحت الجلد الملعون! 👻';
+                    }
+                }
+                
+                localStorage.setItem('snakeGameCoins', coins);
+                document.getElementById('coins').textContent = coins;
+                document.getElementById('wheelResult').textContent = result;
+                document.getElementById('wheelOverlay').style.display = 'flex';
+            } else {
+                alert('عذراً! ليس لديك عملات كافية!');
+            }
+        });
+        
+        function closeWheel() {
+            document.getElementById('wheelOverlay').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
